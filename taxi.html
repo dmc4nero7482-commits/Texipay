@@ -11,50 +11,54 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Share+Tech+Mono&display=swap">
 <style>
   :root{
-    --bg:#000; --panel:#0e0e0e; --card:#111; --line:#333;
-    --ink:#e8e8e8; --muted:#8a8a8a;
-    --red:#ff2b20; --red-dim:#5a1512; --amber:#ff9d21; --green:#37b34a;
+    --bg:#050506; --panel-a:#17171b; --panel-b:#0d0d10; --card:#141418; --line:#2a2a30;
+    --ink:#f0f0f0; --muted:#8a8a92;
+    --red:#ff2a1e; --amber:#ffcf3f; --green:#31b24a; --blue:#2f6bff;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{background:var(--bg);color:var(--ink);font-family:"Noto Sans TC",system-ui,"Microsoft JhengHei",sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
   .mono{font-family:"Share Tech Mono","Noto Sans TC",monospace;font-variant-numeric:tabular-nums}
-  #app{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 14px 20px}
+  #app{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 16px 14px}
 
-  header{display:flex;align-items:center;gap:8px;padding:12px 0 6px}
-  .seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;flex:1}
+  header{display:flex;align-items:center;gap:8px;padding:12px 0 10px}
+  .seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;flex:1}
   .seg button{flex:1;appearance:none;border:0;background:transparent;color:var(--muted);padding:8px 4px;border-radius:8px;font:inherit;font-size:13px;cursor:pointer}
   .seg button[aria-selected="true"]{background:var(--red);color:#fff;font-weight:700}
-  .topbtn{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
+  .topbtn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
   .topbtn:hover{border-color:var(--muted)}
   .topbtn:focus-visible,.seg button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
-  .statusrow{display:flex;align-items:center;gap:14px;padding:10px 4px;font-size:13px;color:var(--ink)}
-  .statusrow .s{color:var(--muted)}
-  .statusrow .gps{margin-left:auto;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 8px}
-  .statusrow .gps.ok{color:var(--green);border-color:#245c2c}
-  .statusrow .gps.err{color:var(--red);border-color:#5a1512}
+  /* ===== 儀表面板 ===== */
+  .panel{background:linear-gradient(160deg,var(--panel-a),var(--panel-b));border:1px solid #26262c;border-radius:18px;padding:16px 18px 14px;box-shadow:0 10px 30px #0009, inset 0 1px 0 #ffffff08}
+  .ptop{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:6px}
+  .fare-label{color:#d6d6d6;font-weight:700;font-size:15px;letter-spacing:.5em;padding-left:.5em}
+  .pico{position:absolute;right:0;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:2px solid #6a6a72;display:flex;align-items:center;justify-content:center;color:#9a9aa2;font-size:13px}
+  .pbody{display:flex;align-items:center;gap:14px;min-height:96px}
+  .bars{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
+  .bars i{display:block;width:22px;height:6px;border-radius:2px;background:#3a3a20}
+  .bars i.on{background:var(--amber);box-shadow:0 0 8px #ffcf3f88}
+  .num{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .num .digit{font-family:"Share Tech Mono",monospace;color:var(--red);text-shadow:0 0 16px #ff2a1e88,0 0 3px #ff2a1e;font-size:clamp(56px,20vw,96px);line-height:1;letter-spacing:2px}
+  .unit{text-align:center;color:#c9c9d0;letter-spacing:.35em;font-size:15px;font-weight:700;margin-top:2px;padding-left:.35em}
+  .pfoot{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:10px}
+  .pfoot .mono{color:#c9c9d0}
 
-  /* 七段儀表 */
-  .meter{display:flex;gap:8px;border:2px solid #e9e9e9;border-radius:8px;background:#050505;padding:14px 12px;align-items:stretch}
-  .meter .main{flex:1;display:flex;align-items:center;justify-content:flex-end;overflow:hidden}
-  .meter .side{width:74px;border-left:2px solid #2a2a2a;display:flex;align-items:center;justify-content:center}
-  .digit{font-family:"Share Tech Mono",monospace;color:var(--red);text-shadow:0 0 12px #ff2b2066,0 0 2px #ff2b20;line-height:1}
-  .meter .main .digit{font-size:clamp(48px,17vw,84px);letter-spacing:2px}
-  .meter .side .digit{font-size:clamp(40px,14vw,68px)}
+  .status{text-align:center;font-size:26px;font-weight:900;color:#fff;margin:16px 0 8px;min-height:32px}
+  .status.run{color:#fff}
+  .status.pause{color:var(--amber)}
+  .status.idle{color:var(--muted)}
+  .event{text-align:center;color:var(--amber);font-size:13px;min-height:18px;margin-bottom:6px}
 
-  .event{color:var(--amber);font-weight:700;font-size:22px;text-align:center;margin:14px 0 6px;min-height:28px}
+  .detail{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;font-size:12px;color:var(--muted);margin:0 4px 12px}
+  .detail .li{display:flex;justify-content:space-between}
+  .detail .li .v{color:#c0c0c8}
 
-  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 14px;font-size:13px;margin:4px 2px 12px}
-  .grid .li{display:flex;gap:4px;white-space:nowrap}
-  .grid .li .k{color:var(--muted)}
-  .grid .li .v{color:var(--ink)}
-
-  .surcharge{display:flex;gap:8px;margin-bottom:10px}
-  .surcharge button{flex:1;appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:14px 4px;font:inherit;font-size:14px;cursor:pointer}
+  .surcharge{display:flex;gap:8px;margin-bottom:8px}
+  .surcharge button{flex:1;appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:14px 4px;font:inherit;font-size:14px;cursor:pointer}
   .surcharge button:hover{border-color:var(--muted)}
   .surcharge button:active{transform:translateY(1px)}
 
@@ -62,12 +66,16 @@
   .btn{flex:1;appearance:none;border:0;border-radius:12px;padding:16px 0;font:inherit;font-weight:700;font-size:18px;cursor:pointer}
   .btn.start{background:var(--green);color:#04140a}
   .btn.end{background:var(--red);color:#fff}
-  .btn.ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
   .btn:active{transform:translateY(1px)}
   .btn:focus-visible,.surcharge button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
-  .conv{text-align:center;color:var(--muted);font-size:12px;margin-top:10px;min-height:16px}
-  .simrow{display:none;align-items:center;gap:10px;margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .bottombar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .bottombar .gps{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+  .bottombar .gps.ok{color:var(--green);border-color:#245c2c}
+  .bottombar .gps.err{color:var(--red);border-color:#5a1512}
+
+  .simrow{display:none;align-items:center;gap:10px;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
   .simrow.on{display:flex}
   .simrow input[type=range]{flex:1;accent-color:var(--red)}
   .simrow .sv{font-size:14px;color:var(--red);width:64px;text-align:right}
@@ -75,7 +83,7 @@
   /* settings */
   .overlay{position:fixed;inset:0;background:#000a;display:none;z-index:20}
   .overlay.open{display:block}
-  .sheet{position:fixed;left:0;right:0;bottom:0;max-width:460px;margin:0 auto;background:var(--panel);border-radius:18px 18px 0 0;border:1px solid var(--line);padding:16px 18px calc(20px + env(safe-area-inset-bottom));max-height:84vh;overflow-y:auto;z-index:21;display:none}
+  .sheet{position:fixed;left:0;right:0;bottom:0;max-width:460px;margin:0 auto;background:var(--panel-a);border-radius:18px 18px 0 0;border:1px solid var(--line);padding:16px 18px calc(20px + env(safe-area-inset-bottom));max-height:84vh;overflow-y:auto;z-index:21;display:none}
   .sheet.open{display:block}
   .sheet h3{font-size:15px;color:var(--amber);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
   .sub{color:var(--muted);font-size:12px;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.05em}
@@ -108,26 +116,28 @@
     <button class="topbtn" id="btnGear">設定</button>
   </header>
 
-  <div class="statusrow">
-    <span class="mono" id="sTime">00:00:00</span>
-    <span class="mono" id="sDist">0.0km</span>
-    <span class="mono" id="sSpeed">0km/h</span>
-    <span class="gps" id="gpsBadge">GPS 待命</span>
+  <div class="panel">
+    <div class="ptop"><span class="fare-label">FARE</span><span class="pico">⟳</span></div>
+    <div class="pbody">
+      <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="num"><span class="digit" id="fareNum">85.0</span></div>
+    </div>
+    <div class="unit" id="unit">NT$</div>
+    <div class="pfoot">
+      <span>起步費 <span class="mono" id="cornerStart">85.0</span></span>
+      <span>附加費 <span class="mono" id="cornerSur">0.0</span></span>
+    </div>
   </div>
 
-  <div class="meter">
-    <div class="main"><span class="digit" id="mMain">12.</span></div>
-    <div class="side"><span class="digit" id="mSide">0</span></div>
-  </div>
+  <div class="status idle" id="status">按「開始」計費</div>
+  <div class="event" id="event"></div>
 
-  <div class="event" id="event">起步費 +12元</div>
-
-  <div class="grid" id="grid"></div>
+  <div class="detail" id="detail"></div>
 
   <div class="surcharge">
-    <button id="add10">附加 ¥10</button>
-    <button id="add1">附加 ¥1</button>
-    <button id="addClr">清空附加</button>
+    <button id="add10">附加 NT$ 10</button>
+    <button id="add1">附加 NT$ 1</button>
+    <button id="addClr">清空附加費</button>
   </div>
 
   <div class="controls">
@@ -135,12 +145,17 @@
     <button class="btn ghost" id="btnPause">暫停</button>
   </div>
 
-  <div class="conv" id="conv"></div>
-
   <div class="simrow" id="simRow">
     <span style="color:var(--muted);font-size:13px">模擬車速</span>
     <input type="range" id="speed" min="0" max="90" step="1" value="0">
     <span class="sv mono"><span id="spd">0</span> km/h</span>
+  </div>
+
+  <div class="bottombar">
+    <span class="mono" id="bDist">0.00km</span>
+    <span class="mono" id="bTime">00:00</span>
+    <span class="mono" id="bSpeed">0km/h</span>
+    <span class="gps" id="gpsBadge">GPS 待命</span>
   </div>
 </div>
 
@@ -150,12 +165,8 @@
   <div class="sub">費率</div>
   <div id="fareFields"></div>
   <div class="sub">顯示</div>
-  <div class="field"><label>顯示幣別</label>
-    <select id="dispSel"></select>
-  </div>
-  <div class="field"><label>基準幣別（計費幣別）</label>
-    <select id="baseSel"></select>
-  </div>
+  <div class="field"><label>顯示幣別</label><select id="dispSel"></select></div>
+  <div class="field"><label>基準幣別（計費幣別）</label><select id="baseSel"></select></div>
   <div class="rateline" id="rateLine"></div>
   <div class="sub">距離來源</div>
   <div class="field"><label>來源</label>
@@ -176,7 +187,6 @@
   "use strict";
   var floor=Math.floor,max=Math.max;
 
-  /* ===== 費率模型（與原生版一致；附加費由使用者手動加）===== */
   function igDefaults(){return{costStart:12,distanceStartKm:2.5,priceDistance:4,periodDistanceMeters:200,priceDistanceLong:1,longDistanceStartKm:12,priceTime:0.6,periodTimeSec:60};}
   function twDefaults(){return{baseFare:85,baseDistanceKm:1.25,contPrice:5,contPeriodMeters:200,delayPrice:5,delayPeriodSec:60,waitSpeedThresholdKmh:5};}
   function igFare(f,d,runMs){
@@ -184,23 +194,21 @@
     var cd=max(0,d-f.distanceStartKm*1000),costDistance=floor(cd/f.periodDistanceMeters)*(f.priceDistance*f.periodDistanceMeters/1000);
     var lo=max(0,d-f.longDistanceStartKm*1000),costLong=floor(lo/f.periodDistanceMeters)*(f.priceDistanceLong*f.periodDistanceMeters/1000);
     var costTime=floor(runSec/f.periodTimeSec)*(f.priceTime*f.periodTimeSec/60);
-    return{base:f.costStart+costDistance+costLong+costTime,items:[["起步費",f.costStart],["里程費",costDistance],["時長費",costTime],["長途費",costLong]]};
+    return{start:f.costStart,base:f.costStart+costDistance+costLong+costTime,items:[["起步費",f.costStart],["里程費",costDistance],["時長費",costTime],["長途費",costLong]]};
   }
   function twFare(f,d,runMs,waitMs){
     var costCont=floor(max(0,d-f.baseDistanceKm*1000)/f.contPeriodMeters)*f.contPrice;
     var costDelay=floor((waitMs/1000)/f.delayPeriodSec)*f.delayPrice;
-    return{base:f.baseFare+costCont+costDelay,items:[["起程費",f.baseFare],["續程費",costCont],["延滯費",costDelay]]};
+    return{start:f.baseFare,base:f.baseFare+costCont+costDelay,items:[["起程費",f.baseFare],["續程費",costCont],["延滯費",costDelay]]};
   }
   var IG_FIELDS=[["costStart","起步費"],["distanceStartKm","起步含公里"],["priceDistance","里程費(元/公里)"],["periodDistanceMeters","里程結算段(公尺)"],["priceDistanceLong","長途費(元/公里)"],["longDistanceStartKm","長途起算(公里)"],["priceTime","時長費(元/分)"],["periodTimeSec","時長結算段(秒)"]];
   var TW_FIELDS=[["baseFare","起程費"],["baseDistanceKm","起程含公里"],["contPrice","續程費(元/段)"],["contPeriodMeters","續程結算段(公尺)"],["delayPrice","延滯費(元/段)"],["delayPeriodSec","延滯結算段(秒)"],["waitSpeedThresholdKmh","停等速度門檻(km/h)"]];
 
-  /* ===== 幣別 ===== */
   var CURRENCIES=[["TWD","NT$","台幣"],["CNY","¥","人民幣"],["USD","$","美元"],["JPY","JP¥","日圓"],["HKD","HK$","港幣"],["KRW","₩","韓元"],["EUR","€","歐元"]];
   function curInfo(c){for(var i=0;i<CURRENCIES.length;i++)if(CURRENCIES[i][0]===c)return CURRENCIES[i];return[c,c,c];}
   function zeroDec(c){return c==="TWD"||c==="JPY"||c==="KRW";}
   function fmtMoney(v,c){var d=zeroDec(c)?0:2;return v.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});}
 
-  /* ===== 狀態 ===== */
   var LS=window.localStorage;
   function loadJSON(k,def){try{var v=LS.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}}
   var app=LS.getItem("taxi_app")||"ig";
@@ -211,8 +219,7 @@
   var mode=LS.getItem("taxi_mode")||"gps";
   var rates=loadJSON("taxi_rates",{TWD:1}),ratesTs=+(LS.getItem("taxi_rates_ts")||0),ratesBase=LS.getItem("taxi_rates_base")||"TWD";
   var eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0};
-  var speed=0,simSpeed=0,lastWhole=0,watchId=null,lastPos=null;
-  var lastItems=null;
+  var speed=0,simSpeed=0,watchId=null,lastPos=null,lastItems=null;
 
   function baseCalc(){var f=fare[app];return app==="ig"?igFare(f,eng.dist,eng.runMs):twFare(f,eng.dist,eng.runMs,eng.waitMs);}
   function fullItems(bc){return bc.items.concat([["附加費",eng.surcharge]]);}
@@ -220,51 +227,47 @@
   function waitThresh(){return app==="tw"?fare.tw.waitSpeedThresholdKmh:0;}
 
   var $=function(id){return document.getElementById(id);},tick=$("tick");
-  function fmtTime(ms){var s=floor(ms/1000),h=floor(s/3600),m=floor((s%3600)/60),ss=s%60;function p(n){return(n<10?"0":"")+n;}return p(h)+":"+p(m)+":"+p(ss);}
+  function fmtTime(ms){var s=floor(ms/1000),h=floor(s/3600),m=floor((s%3600)/60),ss=s%60;function p(n){return(n<10?"0":"")+n;}return h>0?(p(h)+":"+p(m)+":"+p(ss)):(p(m)+":"+p(ss));}
+  function convert(a,code){if(code===base)return a;var rB=rates[base],rC=rates[code];if(rB==null||rC==null)return null;return a/rB*rC;}
 
-  function convert(amountBase,code){if(code===base)return amountBase;var rB=rates[base],rC=rates[code];if(rB==null||rC==null)return null;return amountBase/rB*rC;}
-
-  function setMeter(v){ // v 為顯示幣別金額；以一位小數呈現於七段
-    var neg=v<0;v=Math.abs(v);
-    var s=v.toFixed(1);
-    var dot=s.indexOf(".");
-    $("mMain").textContent=(neg?"-":"")+s.slice(0,dot)+".";
-    $("mSide").textContent=s.slice(dot+1);
+  function setBars(){ // 依速度點亮琥珀段條(裝飾)
+    var n=Math.min(5,Math.max(1,Math.round(speed/18)+1));
+    var bs=$("bars").children;for(var i=0;i<bs.length;i++)bs[i].className=(i<n?"on":"");
   }
+  function setFareNum(v){var neg=v<0;v=Math.abs(v);$("fareNum").textContent=(neg?"-":"")+v.toFixed(1);}
 
   function render(){
     var bc=baseCalc(),bt=baseTotal(bc),items=fullItems(bc);
     var bi=curInfo(base),conv=convert(bt,display),ci=curInfo(display);
     var shown=(conv==null)?bt:conv;
-    setMeter(shown);
-    $("sTime").textContent=fmtTime(eng.runMs);
-    $("sDist").textContent=(eng.dist/1000).toFixed(1)+"km";
-    $("sSpeed").textContent=Math.round(speed)+"km/h";
-    var g="";for(var i=0;i<items.length;i++)g+='<div class="li"><span class="k">'+items[i][0]+'</span><span class="v mono">'+fmtMoney(items[i][1],base)+'元</span></div>';
-    $("grid").innerHTML=g;
-    if(display!==base){$("conv").textContent=(conv==null?"（無匯率）":(ci[2]+" "+ci[1]+" "+fmtMoney(conv,display)))+"　·　基準 "+bi[1]+" "+fmtMoney(bt,base);}
-    else{$("conv").textContent="";}
+    setFareNum(shown);
+    $("unit").textContent=(conv==null)?bi[1]:ci[1];
+    $("cornerStart").textContent=fmtMoney(bc.start,base);
+    $("cornerSur").textContent=fmtMoney(eng.surcharge,base);
+    $("bDist").textContent=(eng.dist/1000).toFixed(2)+"km";
+    $("bTime").textContent=fmtTime(eng.runMs);
+    $("bSpeed").textContent=Math.round(speed)+"km/h";
+    setBars();
+    var g="";for(var i=0;i<items.length;i++)g+='<div class="li"><span>'+items[i][0]+'</span><span class="v mono">'+fmtMoney(items[i][1],base)+'</span></div>';
+    $("detail").innerHTML=g;
+    var st=$("status");
+    if(eng.state==="RUNNING"){st.textContent="計費中";st.className="status run";}
+    else if(eng.state==="PAUSED"){st.textContent="已暫停";st.className="status pause";}
+    else{st.textContent="按「開始」計費";st.className="status idle";}
     $("btnStart").textContent=(eng.state==="IDLE")?"開始":"結束";
     $("btnStart").className="btn "+((eng.state==="IDLE")?"start":"end");
     $("btnPause").textContent=(eng.state==="PAUSED")?"繼續":"暫停";
+    if(display!==base&&conv!=null){$("event").textContent="≈ 基準 "+bi[1]+" "+fmtMoney(bt,base);}
   }
 
-  function setEvent(txt){$("event").textContent=txt;}
+  function setEvent(t){$("event").textContent=t;}
   function playTick(){if(sound){try{tick.currentTime=0;tick.play();}catch(e){}}}
-
   function detectEvents(){
-    var bc=baseCalc(),items=fullItems(bc);
-    if(lastItems){
-      for(var i=0;i<items.length;i++){
-        var prev=lastItems[i]?lastItems[i][1]:0;
-        var d=items[i][1]-prev;
-        if(d>0.0001){setEvent(items[i][0]+" +"+fmtMoney(d,base)+"元");playTick();}
-      }
-    }
+    var items=fullItems(baseCalc());
+    if(lastItems){for(var i=0;i<items.length;i++){var prev=lastItems[i]?lastItems[i][1]:0,d=items[i][1]-prev;if(d>0.0001){setEvent(items[i][0]+" +"+fmtMoney(d,base)+"元");playTick();}}}
     lastItems=items.map(function(x){return [x[0],x[1]];});
   }
 
-  /* 計時迴圈 */
   setInterval(function(){
     if(eng.state!=="RUNNING")return;
     if(mode==="sim"){speed=simSpeed;var dd=speed*1000/3600;if(dd>0)eng.dist+=dd;}
@@ -273,11 +276,10 @@
     detectEvents();render();
   },1000);
 
-  /* GPS */
   function haversine(a,b){var R=6371000,t=Math.PI/180,dLat=(b.lat-a.lat)*t,dLon=(b.lng-a.lng)*t,la1=a.lat*t,la2=b.lat*t;var h=Math.sin(dLat/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
   function setBadge(t,cls){var b=$("gpsBadge");b.textContent=t;b.className="gps"+(cls?(" "+cls):"");}
   function startGps(){if(mode!=="gps"||!navigator.geolocation||watchId!=null)return;setBadge("定位中…","");
-    watchId=navigator.geolocation.watchPosition(function(p){setBadge("GPS 已定位","ok");var c=p.coords,cur={lat:c.latitude,lng:c.longitude,t:p.timestamp};
+    watchId=navigator.geolocation.watchPosition(function(p){setBadge("GPS","ok");var c=p.coords,cur={lat:c.latitude,lng:c.longitude,t:p.timestamp};
       if(c.accuracy&&c.accuracy>30){lastPos=cur;return;}
       var sp=(c.speed!=null&&c.speed>=0)?c.speed*3.6:0;
       if(lastPos){var dt=(cur.t-lastPos.t)/1000,dm=haversine(lastPos,cur);if((c.speed==null||c.speed<0)&&dt>0)sp=dm/dt*3.6;if(eng.state==="RUNNING"&&dm>0)eng.dist+=dm;}
@@ -285,7 +287,6 @@
     },function(){setBadge("GPS 無法使用","err");},{enableHighAccuracy:true,maximumAge:1000,timeout:15000});}
   function stopGps(){if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null;}lastPos=null;}
 
-  /* 匯率 */
   function updateRateLine(){if(!ratesTs){$("rateLine").textContent="尚未取得匯率";return;}var m=floor((Date.now()-ratesTs)/60000),w=m<1?"剛剛":(m<60?m+" 分鐘前":floor(m/60)+" 小時前");$("rateLine").textContent="匯率更新："+w+"（基準 "+ratesBase+"）";}
   function parseFawaz(j,b){b=b.toLowerCase();if(!j[b])return null;var o={},m=j[b];for(var k in m)o[k.toUpperCase()]=m[k];return Object.keys(o).length?o:null;}
   function parseErApi(j){if(!j.rates)return null;var o={};for(var k in j.rates)o[k.toUpperCase()]=j.rates[k];return Object.keys(o).length?o:null;}
@@ -294,30 +295,26 @@
     var urls=[["https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/"+b.toLowerCase()+".json","f"],["https://latest.currency-api.pages.dev/v1/currencies/"+b.toLowerCase()+".json","f"],["https://open.er-api.com/v6/latest/"+b,"e"]];
     (function tryNext(i){if(i>=urls.length){updateRateLine();return;}fetchJson(urls[i][0]).then(function(j){var m=urls[i][1]==="f"?parseFawaz(j,b):parseErApi(j);if(!m)throw 0;m[b]=1;rates=m;ratesTs=Date.now();ratesBase=b;LS.setItem("taxi_rates",JSON.stringify(rates));LS.setItem("taxi_rates_ts",""+ratesTs);LS.setItem("taxi_rates_base",b);updateRateLine();render();}).catch(function(){tryNext(i+1);});})(0);}
 
-  /* 控制 */
   $("btnStart").onclick=function(){
-    if(eng.state==="IDLE"){eng.state="RUNNING";lastItems=null;var f=fare[app];setEvent((app==="ig"?"起步費":"起程費")+" +"+fmtMoney(app==="ig"?f.costStart:f.baseFare,base)+"元");playTick();detectEvents();}
-    else{eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0};lastWhole=0;lastItems=null;setEvent("已結束");}
+    if(eng.state==="IDLE"){eng.state="RUNNING";lastItems=null;playTick();detectEvents();}
+    else{eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0};lastItems=null;}
     render();
   };
-  $("btnPause").onclick=function(){if(eng.state==="RUNNING"){eng.state="PAUSED";setEvent("已暫停");}else if(eng.state==="PAUSED"){eng.state="RUNNING";setEvent("繼續計費");}render();};
+  $("btnPause").onclick=function(){if(eng.state==="RUNNING")eng.state="PAUSED";else if(eng.state==="PAUSED")eng.state="RUNNING";render();};
   function addSur(a){eng.surcharge+=a;setEvent("附加費 +"+fmtMoney(a,base)+"元");playTick();lastItems=null;detectEvents();render();}
   $("add10").onclick=function(){addSur(10);};
   $("add1").onclick=function(){addSur(1);};
   $("addClr").onclick=function(){eng.surcharge=0;setEvent("附加費已清空");lastItems=null;detectEvents();render();};
-
   $("btnShare").onclick=function(){var url=location.href;if(navigator.share){navigator.share({title:"計程跳表",url:url}).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(url);setEvent("已複製網址");}};
 
-  /* app / mode / 幣別 */
-  function selectApp(a){app=a;LS.setItem("taxi_app",a);eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0};lastWhole=0;lastItems=null;
+  function selectApp(a){app=a;LS.setItem("taxi_app",a);eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0};lastItems=null;
     document.querySelectorAll('.seg [data-app]').forEach(function(t){t.setAttribute("aria-selected",t.dataset.app===a?"true":"false");});
-    setEvent("");buildFields();render();}
+    buildFields();render();}
   document.querySelectorAll('.seg [data-app]').forEach(function(t){t.onclick=function(){selectApp(t.dataset.app);};});
-  function selectMode(m){mode=m;LS.setItem("taxi_mode",m);document.querySelectorAll('.mini-seg [data-mode]').forEach(function(t){t.setAttribute("aria-selected",t.dataset.mode===m?"true":"false");});$("simRow").classList.toggle("on",m==="sim");if(m==="gps"){startGps();}else{stopGps();setBadge("模擬模式","");speed=simSpeed;}render();}
+  function selectMode(m){mode=m;LS.setItem("taxi_mode",m);document.querySelectorAll('.mini-seg [data-mode]').forEach(function(t){t.setAttribute("aria-selected",t.dataset.mode===m?"true":"false");});$("simRow").classList.toggle("on",m==="sim");if(m==="gps"){startGps();}else{stopGps();setBadge("模擬","");speed=simSpeed;}render();}
   document.querySelectorAll('.mini-seg [data-mode]').forEach(function(t){t.onclick=function(){selectMode(t.dataset.mode);};});
   $("speed").oninput=function(){simSpeed=+this.value;$("spd").textContent=simSpeed;if(mode==="sim"){speed=simSpeed;render();}};
 
-  /* 設定 */
   function buildFields(){var fields=app==="ig"?IG_FIELDS:TW_FIELDS,f=fare[app],h="";for(var i=0;i<fields.length;i++){var k=fields[i][0];h+='<div class="field"><label>'+fields[i][1]+'</label><input type="number" step="0.1" data-k="'+k+'" value="'+f[k]+'"></div>';}$("fareFields").innerHTML=h;$("fareFields").querySelectorAll("input").forEach(function(inp){inp.onchange=function(){var v=parseFloat(this.value);if(!isNaN(v)){fare[app][this.dataset.k]=v;LS.setItem("taxi_fare_"+app,JSON.stringify(fare[app]));render();}};});}
   function buildSel(sel,val){var h="";for(var i=0;i<CURRENCIES.length;i++){var c=CURRENCIES[i];h+='<option value="'+c[0]+'"'+(c[0]===val?" selected":"")+'>'+c[2]+' ('+c[0]+')</option>';}sel.innerHTML=h;}
   function openSheet(o){$("overlay").classList.toggle("open",o);$("sheet").classList.toggle("open",o);}
@@ -326,10 +323,8 @@
   $("dispSel").onchange=function(){display=this.value;LS.setItem("taxi_display",display);render();};
   $("baseSel").onchange=function(){base=this.value;LS.setItem("taxi_base",base);refreshRates();render();};
 
-  /* init */
   buildSel($("dispSel"),display);buildSel($("baseSel"),base);$("soundToggle").checked=sound;buildFields();selectApp(app);selectMode(mode);
   updateRateLine();if(!ratesTs||Date.now()-ratesTs>3600000)refreshRates();else render();
-  setEvent("按「開始」開始計費");
 
   if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}
 })();
