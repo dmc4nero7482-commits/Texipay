@@ -1,9 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" rx="112" fill="#0b0b0d"/>
-  <rect x="96" y="150" width="320" height="150" rx="20" fill="#1b1b1e" stroke="#ffc107" stroke-width="10"/>
-  <text x="256" y="255" font-family="'Share Tech Mono',monospace" font-size="86" fill="#ffc107" text-anchor="middle" letter-spacing="4">88.8</text>
-  <path d="M150 150 l24 -58 h164 l24 58 z" fill="#ffc107"/>
-  <circle cx="176" cy="360" r="34" fill="#1b1b1e" stroke="#ffc107" stroke-width="10"/>
-  <circle cx="336" cy="360" r="34" fill="#1b1b1e" stroke="#ffc107" stroke-width="10"/>
-  <rect x="150" y="342" width="212" height="18" fill="#ffc107"/>
+  <!-- 紅底圓角 -->
+  <path fill="#E1251B" d="M120,0 H392 A120,120 0 0 1 512,120 V392 A120,120 0 0 1 392,512 H120 A120,120 0 0 1 0,392 V120 A120,120 0 0 1 120,0 Z"/>
+  <!-- 開口環(頂端缺口,順時針) -->
+  <path fill="none" stroke="#FFFFFF" stroke-width="26" stroke-linecap="round" d="M334.6,93.4 A186,186 0 1 1 177.4,93.4"/>
+  <!-- 箭頭(環末端,指向缺口) -->
+  <path fill="#FFFFFF" d="M219,74 L163,63 L192,124 Z"/>
+  <!-- 計程車車身 -->
+  <path fill="#FFFFFF" d="M142,286 H370 A16,16 0 0 1 386,302 V324 A16,16 0 0 1 370,340 H142 A16,16 0 0 1 126,324 V302 A16,16 0 0 1 142,286 Z"/>
+  <!-- 車頂座艙 -->
+  <path fill="#FFFFFF" d="M172,286 L200,244 Q205,236 216,236 H296 Q307,236 312,244 L340,286 Z"/>
+  <!-- 頂燈 -->
+  <path fill="#FFFFFF" d="M240,220 H272 A5,5 0 0 1 277,225 V235 A5,5 0 0 1 272,240 H240 A5,5 0 0 1 235,235 V225 A5,5 0 0 1 240,220 Z"/>
+  <!-- 車窗(紅) -->
+  <path fill="#E1251B" d="M214,252 H250 V276 H214 Z"/>
+  <path fill="#E1251B" d="M262,252 H300 V276 H262 Z"/>
+  <!-- 車輪 -->
+  <path fill="#FFFFFF" d="M154,350 a28,28 0 1 0 56,0 a28,28 0 1 0 -56,0 Z"/>
+  <path fill="#FFFFFF" d="M302,350 a28,28 0 1 0 56,0 a28,28 0 1 0 -56,0 Z"/>
+  <path fill="#E1251B" d="M170,350 a12,12 0 1 0 24,0 a12,12 0 1 0 -24,0 Z"/>
+  <path fill="#E1251B" d="M318,350 a12,12 0 1 0 24,0 a12,12 0 1 0 -24,0 Z"/>
 </svg>
