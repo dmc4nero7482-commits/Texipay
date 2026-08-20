@@ -102,6 +102,9 @@
   .mini-seg button[aria-selected="true"]{background:var(--red);color:#fff;font-weight:700}
   .closebtn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
   .rateline{color:var(--muted);font-size:11px;margin-top:4px}
+  .preset-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .preset-row button{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit;font-size:12px;cursor:pointer}
+  .preset-row button:hover{border-color:var(--amber)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -162,6 +165,15 @@
 <div class="overlay" id="overlay"></div>
 <div class="sheet" id="sheet" aria-label="設定">
   <h3>設定 <button class="closebtn" id="btnClose">關閉</button></h3>
+  <div class="sub" id="presetTitle" style="display:none">地區費率（台灣）</div>
+  <div id="presetRow" class="preset-row" style="display:none"></div>
+  <div class="field" id="nightRow" style="display:none"><label>時段</label>
+    <div class="mini-seg" id="nightSeg">
+      <button data-nm="auto" aria-selected="true">自動</button>
+      <button data-nm="day">日間</button>
+      <button data-nm="night">夜間</button>
+    </div>
+  </div>
   <div class="sub">費率</div>
   <div id="fareFields"></div>
   <div class="sub">顯示</div>
@@ -188,7 +200,13 @@
   var floor=Math.floor,max=Math.max;
 
   function igDefaults(){return{costStart:12,distanceStartKm:2.5,priceDistance:4,periodDistanceMeters:200,priceDistanceLong:1,longDistanceStartKm:12,priceTime:0.6,periodTimeSec:60};}
-  function twDefaults(){return{baseFare:85,baseDistanceKm:1.25,contPrice:5,contPeriodMeters:200,delayPrice:5,delayPeriodSec:60,waitSpeedThresholdKmh:5};}
+  function twDefaults(){return{baseFare:85,baseDistanceKm:1.25,contPrice:5,contPeriodMeters:200,delayPrice:5,delayPeriodSec:60,waitSpeedThresholdKmh:5,nightType:'flat',nightValue:20};}
+  // 台灣各地區跳表費率(依網路公告整理);night: flat=每趟加固定額, percent=按表加成
+  var TW_PRESETS=[
+    {name:'大台北·台中',baseFare:85,baseDistanceKm:1.25,contPrice:5,contPeriodMeters:200,delayPrice:5,delayPeriodSec:60,waitSpeedThresholdKmh:5,nightType:'flat',nightValue:20},
+    {name:'桃園',baseFare:90,baseDistanceKm:1.25,contPrice:5,contPeriodMeters:200,delayPrice:5,delayPeriodSec:80,waitSpeedThresholdKmh:5,nightType:'flat',nightValue:20},
+    {name:'南高(台南·高雄)',baseFare:85,baseDistanceKm:1.25,contPrice:5,contPeriodMeters:200,delayPrice:5,delayPeriodSec:100,waitSpeedThresholdKmh:5,nightType:'percent',nightValue:0.2}
+  ];
   function igFare(f,d,runMs){
     var runSec=runMs/1000;
     var cd=max(0,d-f.distanceStartKm*1000),costDistance=floor(cd/f.periodDistanceMeters)*(f.priceDistance*f.periodDistanceMeters/1000);
@@ -217,13 +235,16 @@
   var display=LS.getItem("taxi_display")||"TWD";
   var sound=LS.getItem("taxi_sound")!=="0";
   var mode=LS.getItem("taxi_mode")||"gps";
+  var nightMode=LS.getItem("taxi_night")||"auto";
   var rates=loadJSON("taxi_rates",{TWD:1}),ratesTs=+(LS.getItem("taxi_rates_ts")||0),ratesBase=LS.getItem("taxi_rates_base")||"TWD";
   var eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0};
   var speed=0,simSpeed=0,watchId=null,lastPos=null,lastItems=null;
 
   function baseCalc(){var f=fare[app];return app==="ig"?igFare(f,eng.dist,eng.runMs):twFare(f,eng.dist,eng.runMs,eng.waitMs);}
-  function fullItems(bc){return bc.items.concat([["附加費",eng.surcharge]]);}
-  function baseTotal(bc){return bc.base+eng.surcharge;}
+  function isNight(){if(app!=="tw")return false;if(nightMode==="day")return false;if(nightMode==="night")return true;var h=new Date().getHours();return h>=23||h<6;}
+  function nightAdd(bc){if(!isNight())return 0;var f=fare.tw;return f.nightType==="percent"?bc.base*f.nightValue:f.nightValue;}
+  function fullItems(bc){var items=bc.items.slice();if(app==="tw")items.push(["夜間加成",nightAdd(bc)]);items.push(["附加費",eng.surcharge]);return items;}
+  function baseTotal(bc){return bc.base+nightAdd(bc)+eng.surcharge;}
   function waitThresh(){return app==="tw"?fare.tw.waitSpeedThresholdKmh:0;}
 
   var $=function(id){return document.getElementById(id);},tick=$("tick");
@@ -250,10 +271,10 @@
     setBars();
     var g="";for(var i=0;i<items.length;i++)g+='<div class="li"><span>'+items[i][0]+'</span><span class="v mono">'+fmtMoney(items[i][1],base)+'</span></div>';
     $("detail").innerHTML=g;
-    var st=$("status");
-    if(eng.state==="RUNNING"){st.textContent="計費中";st.className="status run";}
-    else if(eng.state==="PAUSED"){st.textContent="已暫停";st.className="status pause";}
-    else{st.textContent="按「開始」計費";st.className="status idle";}
+    var st=$("status"),night=(app==="tw"&&isNight())?" · 夜間":"";
+    if(eng.state==="RUNNING"){st.textContent="計費中"+night;st.className="status run";}
+    else if(eng.state==="PAUSED"){st.textContent="已暫停"+night;st.className="status pause";}
+    else{st.textContent="按「開始」計費"+(night?"（夜間）":"");st.className="status idle";}
     $("btnStart").textContent=(eng.state==="IDLE")?"開始":"結束";
     $("btnStart").className="btn "+((eng.state==="IDLE")?"start":"end");
     $("btnPause").textContent=(eng.state==="PAUSED")?"繼續":"暫停";
@@ -309,11 +330,18 @@
 
   function selectApp(a){app=a;LS.setItem("taxi_app",a);eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0};lastItems=null;
     document.querySelectorAll('.seg [data-app]').forEach(function(t){t.setAttribute("aria-selected",t.dataset.app===a?"true":"false");});
-    buildFields();render();}
+    var tw=(a==="tw");
+    $("presetTitle").style.display=tw?"":"none";$("presetRow").style.display=tw?"":"none";$("nightRow").style.display=tw?"":"none";
+    buildPresets();buildFields();render();}
+  function buildPresets(){if(app!=="tw"){return;}var h="";for(var i=0;i<TW_PRESETS.length;i++)h+='<button data-i="'+i+'">'+TW_PRESETS[i].name+'</button>';$("presetRow").innerHTML=h;
+    $("presetRow").querySelectorAll("button").forEach(function(b){b.onclick=function(){applyPreset(TW_PRESETS[+b.dataset.i]);};});}
+  function applyPreset(p){fare.tw=Object.assign(twDefaults(),p);delete fare.tw.name;LS.setItem("taxi_fare_tw",JSON.stringify(fare.tw));buildFields();render();}
   document.querySelectorAll('.seg [data-app]').forEach(function(t){t.onclick=function(){selectApp(t.dataset.app);};});
   function selectMode(m){mode=m;LS.setItem("taxi_mode",m);document.querySelectorAll('.mini-seg [data-mode]').forEach(function(t){t.setAttribute("aria-selected",t.dataset.mode===m?"true":"false");});$("simRow").classList.toggle("on",m==="sim");if(m==="gps"){startGps();}else{stopGps();setBadge("模擬","");speed=simSpeed;}render();}
   document.querySelectorAll('.mini-seg [data-mode]').forEach(function(t){t.onclick=function(){selectMode(t.dataset.mode);};});
   $("speed").oninput=function(){simSpeed=+this.value;$("spd").textContent=simSpeed;if(mode==="sim"){speed=simSpeed;render();}};
+  function selectNight(nm){nightMode=nm;LS.setItem("taxi_night",nm);document.querySelectorAll('#nightSeg [data-nm]').forEach(function(t){t.setAttribute("aria-selected",t.dataset.nm===nm?"true":"false");});render();}
+  document.querySelectorAll('#nightSeg [data-nm]').forEach(function(t){t.onclick=function(){selectNight(t.dataset.nm);};});
 
   function buildFields(){var fields=app==="ig"?IG_FIELDS:TW_FIELDS,f=fare[app],h="";for(var i=0;i<fields.length;i++){var k=fields[i][0];h+='<div class="field"><label>'+fields[i][1]+'</label><input type="number" step="0.1" data-k="'+k+'" value="'+f[k]+'"></div>';}$("fareFields").innerHTML=h;$("fareFields").querySelectorAll("input").forEach(function(inp){inp.onchange=function(){var v=parseFloat(this.value);if(!isNaN(v)){fare[app][this.dataset.k]=v;LS.setItem("taxi_fare_"+app,JSON.stringify(fare[app]));render();}};});}
   function buildSel(sel,val){var h="";for(var i=0;i<CURRENCIES.length;i++){var c=CURRENCIES[i];h+='<option value="'+c[0]+'"'+(c[0]===val?" selected":"")+'>'+c[2]+' ('+c[0]+')</option>';}sel.innerHTML=h;}
@@ -323,7 +351,7 @@
   $("dispSel").onchange=function(){display=this.value;LS.setItem("taxi_display",display);render();};
   $("baseSel").onchange=function(){base=this.value;LS.setItem("taxi_base",base);refreshRates();render();};
 
-  buildSel($("dispSel"),display);buildSel($("baseSel"),base);$("soundToggle").checked=sound;buildFields();selectApp(app);selectMode(mode);
+  buildSel($("dispSel"),display);buildSel($("baseSel"),base);$("soundToggle").checked=sound;buildFields();selectApp(app);selectMode(mode);selectNight(nightMode);
   updateRateLine();if(!ratesTs||Date.now()-ratesTs>3600000)refreshRates();else render();
 
   if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}
