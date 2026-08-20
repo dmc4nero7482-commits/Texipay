@@ -1,7 +1,7 @@
 {
-  "name": "計程跳表",
-  "short_name": "計程跳表",
-  "description": "計程車跳表：GPS 計費、即時匯率換算、原味與台灣兩種計價",
+  "name": "計程車跳表器",
+  "short_name": "計程車跳表器",
+  "description": "台灣計程車跳表:GPS 計費、地區費率、日夜、附加費、高速過路費、即時匯率換算",
   "start_url": "./taxi.html",
   "display": "standalone",
   "orientation": "portrait",

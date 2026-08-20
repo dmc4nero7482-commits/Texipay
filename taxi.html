@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>計程跳表</title>
+<title>計程車跳表器</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -107,7 +107,7 @@
 <body>
 <div id="app">
   <header>
-    <span class="title">計程跳表 · 台灣</span>
+    <span class="title">計程車跳表器</span>
     <button class="topbtn" id="btnShare">分享</button>
     <button class="topbtn" id="btnGear">設定</button>
   </header>
@@ -314,7 +314,7 @@
   $("add1").onclick=function(){addSur(1);};
   $("addClr").onclick=function(){eng.surcharge=0;setEvent("附加費已清空");lastItems=null;detectEvents();render();};
   $("hwy").onclick=function(){highwayOn=!highwayOn;setEvent(highwayOn?"已開始計過路費(1.2元/公里)":"已停止計過路費");render();};
-  $("btnShare").onclick=function(){var url=location.href;if(navigator.share){navigator.share({title:"計程跳表",url:url}).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(url);setEvent("已複製網址");}};
+  $("btnShare").onclick=function(){var url=location.href;if(navigator.share){navigator.share({title:"計程車跳表器",url:url}).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(url);setEvent("已複製網址");}};
 
   function selectMode(m){mode=m;LS.setItem("taxi_mode",m);document.querySelectorAll('#modeSeg [data-mode]').forEach(function(t){t.setAttribute("aria-selected",t.dataset.mode===m?"true":"false");});$("simRow").classList.toggle("on",m==="sim");if(m==="gps"){startGps();}else{stopGps();setBadge("模擬","");speed=simSpeed;}render();}
   document.querySelectorAll('#modeSeg [data-mode]').forEach(function(t){t.onclick=function(){selectMode(t.dataset.mode);};});
