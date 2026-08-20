@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#0b0b0d"/>
+  <rect x="96" y="150" width="320" height="150" rx="20" fill="#1b1b1e" stroke="#ffc107" stroke-width="10"/>
+  <text x="256" y="255" font-family="'Share Tech Mono',monospace" font-size="86" fill="#ffc107" text-anchor="middle" letter-spacing="4">88.8</text>
+  <path d="M150 150 l24 -58 h164 l24 58 z" fill="#ffc107"/>
+  <circle cx="176" cy="360" r="34" fill="#1b1b1e" stroke="#ffc107" stroke-width="10"/>
+  <circle cx="336" cy="360" r="34" fill="#1b1b1e" stroke="#ffc107" stroke-width="10"/>
+  <rect x="150" y="342" width="212" height="18" fill="#ffc107"/>
+</svg>
