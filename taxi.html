@@ -32,11 +32,11 @@
   .topbtn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
   .panel{background:transparent;border:0;padding:0}
-  .screen{background:#050506;border:2px solid #cdced4;border-radius:16px;padding:14px 16px 10px}
-  .ptop{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:6px}
-  .fare-label{color:#d6d6d6;font-weight:700;font-size:15px;letter-spacing:.5em;padding-left:.5em;display:inline-flex;align-items:center}
-  .fare-label::before,.fare-label::after{content:"";display:inline-block;width:18px;height:2px;background:#5a5a62;margin:0 8px}
-  .pico{position:absolute;right:0;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:2px solid #6a6a72;display:flex;align-items:center;justify-content:center;color:#9a9aa2;font-size:13px}
+  .screen{position:relative;background:#050506;border:2px solid #cdced4;border-radius:16px;padding:22px 16px 22px;margin-top:6px}
+  /* FARE 壓在上框線上 */
+  .ptop{position:absolute;top:0;left:0;right:0;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .fare-label{color:#e6e6ea;font-weight:700;font-size:15px;letter-spacing:.45em;padding:0 10px;background:#050506;display:inline-flex;align-items:center}
+  .pico{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;border:2px solid #8a8a92;background:#050506;display:flex;align-items:center;justify-content:center;color:#8a8a92;font-size:12px}
   .pbody{display:flex;align-items:center;gap:14px;min-height:96px}
   .bars{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
   .bars i{display:block;width:28px;height:8px;border-radius:2px;background:#39391f}
@@ -44,10 +44,12 @@
   .num{position:relative;flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center}
   .seg{position:relative;display:inline-block}
   .seg.side{border-left:2px solid #cdced4;margin-left:6px;padding-left:8px}
-  .seg .digit,.seg .ghost{font-family:"DSEG7","Share Tech Mono",monospace;font-size:clamp(38px,12vw,56px);line-height:1;letter-spacing:2px;white-space:nowrap}
+  .seg .digit,.seg .ghost{font-family:"DSEG7","Share Tech Mono",monospace;font-size:clamp(48px,15vw,70px);line-height:1;letter-spacing:2px;white-space:nowrap}
   .seg .ghost{position:absolute;left:0;top:0;color:#4a1009}
   .seg .digit{position:relative;color:var(--red);text-shadow:0 0 16px #ff2a1e88,0 0 3px #ff2a1e}
-  .unit{text-align:center;color:#c9c9d0;letter-spacing:.35em;font-size:15px;font-weight:700;margin-top:2px;padding-left:.35em}
+  /* NT$ 壓在下框線上 */
+  .unit{position:absolute;bottom:0;left:0;right:0;transform:translateY(50%);text-align:center;pointer-events:none}
+  .unit span{display:inline-block;background:#050506;padding:0 12px;color:#e6e6ea;letter-spacing:.3em;font-size:15px;font-weight:700}
   .pfoot{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:10px;padding:0 6px}
   .pfoot .mono{color:#c9c9d0}
 
@@ -126,7 +128,7 @@
         <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i></div>
         <div class="num"><span class="seg"><span class="ghost" id="ghostMain">88.</span><span class="digit" id="numMain">85.</span></span><span class="seg side"><span class="ghost" id="ghostSide">8</span><span class="digit" id="numSide">0</span></span></div>
       </div>
-      <div class="unit" id="unit">NT$</div>
+      <div class="unit"><span id="unit">NT$</span></div>
     </div>
     <div class="pfoot">
       <span>起程費 <span class="mono" id="cornerStart">85.0</span></span>
