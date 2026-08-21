@@ -303,9 +303,15 @@
     var urls=[["https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/"+b.toLowerCase()+".json","f"],["https://latest.currency-api.pages.dev/v1/currencies/"+b.toLowerCase()+".json","f"],["https://open.er-api.com/v6/latest/"+b,"e"]];
     (function tryNext(i){if(i>=urls.length){updateRateLine();return;}fetchJson(urls[i][0]).then(function(j){var m=urls[i][1]==="f"?parseFawaz(j,b):parseErApi(j);if(!m)throw 0;m[b]=1;rates=m;ratesTs=Date.now();ratesBase=b;LS.setItem("taxi_rates",JSON.stringify(rates));LS.setItem("taxi_rates_ts",""+ratesTs);LS.setItem("taxi_rates_base",b);updateRateLine();render();}).catch(function(){tryNext(i+1);});})(0);}
 
+  // 螢幕常亮(Wake Lock),計費中不熄屏
+  var wakeLock=null;
+  function acquireWake(){try{if('wakeLock' in navigator)navigator.wakeLock.request('screen').then(function(w){wakeLock=w;}).catch(function(){});}catch(e){}}
+  function releaseWake(){try{if(wakeLock){wakeLock.release();wakeLock=null;}}catch(e){}}
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&eng.state==="RUNNING")acquireWake();});
+
   $("btnStart").onclick=function(){
-    if(eng.state==="IDLE"){eng.state="RUNNING";lastItems=null;playTick();detectEvents();}
-    else{eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0,highwayMeters:0};highwayOn=false;lastItems=null;}
+    if(eng.state==="IDLE"){eng.state="RUNNING";lastItems=null;playTick();detectEvents();acquireWake();}
+    else{eng={state:"IDLE",dist:0,runMs:0,waitMs:0,surcharge:0,highwayMeters:0};highwayOn=false;lastItems=null;releaseWake();}
     render();
   };
   $("btnPause").onclick=function(){if(eng.state==="RUNNING")eng.state="PAUSED";else if(eng.state==="PAUSED")eng.state="RUNNING";render();};
