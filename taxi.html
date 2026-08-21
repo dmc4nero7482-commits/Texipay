@@ -196,7 +196,13 @@
 <div class="overlay" id="overlay"></div>
 <div class="sheet" id="sheet" aria-label="設定">
   <h3>設定 <button class="closebtn" id="btnClose">關閉</button></h3>
-  <div class="sub">地區費率</div>
+  <div class="sub">我的計價方案（5 組）</div>
+  <div id="slotRow" class="preset-row"></div>
+  <div class="field" style="gap:6px">
+    <input id="slotName" type="text" placeholder="方案名稱" style="flex:1;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 9px;font:inherit;font-size:13px">
+    <button class="closebtn" id="slotSave">儲存目前費率</button>
+  </div>
+  <div class="sub">地區費率(快速套用)</div>
   <div id="presetRow" class="preset-row"></div>
   <div class="field"><label>時段</label>
     <div class="mini-seg" id="nightSeg">
@@ -407,6 +413,44 @@
   function buildPresets(){var h="";for(var i=0;i<TW_PRESETS.length;i++)h+='<button data-i="'+i+'">'+TW_PRESETS[i].name+'</button>';$("presetRow").innerHTML=h;
     $("presetRow").querySelectorAll("button").forEach(function(b){b.onclick=function(){applyPreset(TW_PRESETS[+b.dataset.i]);};});}
   function applyPreset(p){fareTw=Object.assign(twDefaults(),p);delete fareTw.name;LS.setItem("taxi_fare_tw",JSON.stringify(fareTw));buildFields();render();}
+
+  // ===== 我的計價方案(5 組,可存/切換/命名)=====
+  function slotsLoad(){try{var a=JSON.parse(LS.getItem("taxi_slots")||"null");if(a&&a.length===5)return a;}catch(e){}
+    return [null,null,null,null,null];}
+  function slotsSave(a){LS.setItem("taxi_slots",JSON.stringify(a));}
+  var activeSlot=parseInt(LS.getItem("taxi_slot_active")||"-1",10);
+  function buildSlots(){
+    var a=slotsLoad(),h="";
+    for(var i=0;i<5;i++){
+      var s=a[i], label=s?(s.name||("方案"+(i+1))):("空 "+(i+1));
+      h+='<button data-s="'+i+'"'+(i===activeSlot?' style="border-color:var(--amber);color:var(--amber)"':'')+'>'+label+'</button>';
+    }
+    $("slotRow").innerHTML=h;
+    $("slotRow").querySelectorAll("button").forEach(function(b){
+      b.onclick=function(){
+        var i=+b.dataset.s, arr=slotsLoad();
+        if(arr[i]){ // 套用
+          fareTw=Object.assign(twDefaults(),arr[i].fare);
+          LS.setItem("taxi_fare_tw",JSON.stringify(fareTw));
+          activeSlot=i;LS.setItem("taxi_slot_active",""+i);
+          $("slotName").value=arr[i].name||"";
+          buildSlots();buildFields();render();
+          setEvent("已套用「"+(arr[i].name||("方案"+(i+1)))+"」");
+        }else{ // 空位:直接存目前費率
+          arr[i]={name:($("slotName").value.trim()||("方案"+(i+1))),fare:JSON.parse(JSON.stringify(fareTw))};
+          slotsSave(arr);activeSlot=i;LS.setItem("taxi_slot_active",""+i);
+          buildSlots();setEvent("已儲存到方案 "+(i+1));
+        }
+      };
+    });
+  }
+  $("slotSave").onclick=function(){
+    var arr=slotsLoad(), i=(activeSlot>=0?activeSlot:arr.indexOf(null));
+    if(i<0)i=0; // 全滿則覆蓋第一組
+    arr[i]={name:($("slotName").value.trim()||("方案"+(i+1))),fare:JSON.parse(JSON.stringify(fareTw))};
+    slotsSave(arr);activeSlot=i;LS.setItem("taxi_slot_active",""+i);
+    buildSlots();setEvent("已儲存方案 "+(i+1));
+  };
   function buildFields(){var h="";for(var i=0;i<TW_FIELDS.length;i++){var k=TW_FIELDS[i][0];h+='<div class="field"><label>'+TW_FIELDS[i][1]+'</label><input type="number" step="0.1" data-k="'+k+'" value="'+fareTw[k]+'"></div>';}$("fareFields").innerHTML=h;$("fareFields").querySelectorAll("input").forEach(function(inp){inp.onchange=function(){var v=parseFloat(this.value);if(!isNaN(v)){fareTw[this.dataset.k]=v;LS.setItem("taxi_fare_tw",JSON.stringify(fareTw));render();}};});}
   function buildSel(sel,val){var h="";for(var i=0;i<CURRENCIES.length;i++){var c=CURRENCIES[i];h+='<option value="'+c[0]+'"'+(c[0]===val?" selected":"")+'>'+c[2]+' ('+c[0]+')</option>';}sel.innerHTML=h;}
   function openSheet(o){$("overlay").classList.toggle("open",o);$("sheet").classList.toggle("open",o);}
@@ -415,7 +459,7 @@
   $("dispSel").onchange=function(){display=this.value;LS.setItem("taxi_display",display);render();};
   $("baseSel").onchange=function(){base=this.value;LS.setItem("taxi_base",base);refreshRates();render();};
 
-  buildSel($("dispSel"),display);buildSel($("baseSel"),base);$("soundToggle").checked=sound;buildPresets();buildFields();selectMode(mode);selectNight(nightMode);applyWide();
+  buildSel($("dispSel"),display);buildSel($("baseSel"),base);$("soundToggle").checked=sound;buildPresets();buildSlots();buildFields();selectMode(mode);selectNight(nightMode);applyWide();
   updateRateLine();if(!ratesTs||Date.now()-ratesTs>3600000)refreshRates();else render();
 
   if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}
