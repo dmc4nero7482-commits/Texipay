@@ -41,7 +41,8 @@
   .pico.err{border-color:var(--red);color:var(--red)}
   /* 右下 放大/縮小 */
   .zoom{position:absolute;right:10px;bottom:-16px;display:flex;gap:6px}
-  .zoom button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .zoom button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+  .zoom button svg{display:block}
   .zoom button:active{transform:translateY(1px)}
   .pbody{display:flex;align-items:stretch;gap:12px;min-height:104px}
   .bars{display:flex;flex-direction:column;justify-content:space-between;flex:0 0 auto;align-self:stretch;padding:2px 0}
@@ -155,7 +156,7 @@
       </div>
       <div class="unit"><span id="unit">NT$</span></div>
       <div class="zoom">
-        <button id="btnWide" title="橫向/費用明細">⤢</button>
+        <button id="btnWide" title="橫向/費用明細"></button>
       </div>
     </div>
     <div class="pfoot">
@@ -340,12 +341,14 @@
   function setBadge(t,cls){var b=$("gpsBadge");b.textContent=t;b.className="gps"+(cls?(" "+cls):"");
     var g=$("gpsIcon");if(g)g.className="pico"+(cls?(" "+cls):"");}
 
+  var ICON_OPEN=`<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6"/><path d="M20 4l-7 7"/><path d="M10 20H4v-6"/><path d="M4 20l7-7"/></svg>`;
+  var ICON_CLOSE=`<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 10h-6V4"/><path d="M13 11l7-7"/><path d="M4 14h6v6"/><path d="M11 13l-7 7"/></svg>`;
   // 橫向模式(右側顯示費用明細)
   var wide=LS.getItem("taxi_wide")==="1";
   function applyWide(){
     document.body.classList.toggle("wide",wide);
     LS.setItem("taxi_wide",wide?"1":"0");
-    var b=$("btnWide");if(b){b.textContent=wide?"⤡":"⤢";b.title=wide?"回直向":"橫向/費用明細";}
+    var b=$("btnWide");if(b){b.innerHTML=wide?ICON_CLOSE:ICON_OPEN;b.title=wide?"回直向":"橫向/費用明細";}
     render();
   }
   $("btnWide").onclick=function(){wide=!wide;applyWide();};
