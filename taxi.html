@@ -31,20 +31,22 @@
   .topbtn:hover{border-color:var(--muted)}
   .topbtn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
-  .panel{background:linear-gradient(160deg,var(--panel-a),var(--panel-b));border:1px solid #3a3a44;border-radius:20px;padding:16px 20px 14px;box-shadow:0 10px 30px #0009}
-  .screen{background:transparent;border:0;padding:0}
+  .panel{background:transparent;border:0;padding:0}
+  .screen{background:#050506;border:2px solid #cdced4;border-radius:16px;padding:14px 16px 10px}
   .ptop{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:6px}
   .fare-label{color:#d6d6d6;font-weight:700;font-size:15px;letter-spacing:.5em;padding-left:.5em;display:inline-flex;align-items:center}
   .fare-label::before,.fare-label::after{content:"";display:inline-block;width:18px;height:2px;background:#5a5a62;margin:0 8px}
   .pico{position:absolute;right:0;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:2px solid #6a6a72;display:flex;align-items:center;justify-content:center;color:#9a9aa2;font-size:13px}
   .pbody{display:flex;align-items:center;gap:14px;min-height:96px}
-  .bars{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}
-  .bars i{display:block;width:18px;height:5px;border-radius:1px;background:#39391f}
+  .bars{display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
+  .bars i{display:block;width:28px;height:8px;border-radius:2px;background:#39391f}
   .bars i.on{background:var(--amber);box-shadow:0 0 8px #ffcf3f88}
-  .num{position:relative;flex:1;overflow:hidden;text-align:center}
-  .num .digit,.num .ghost{font-family:"DSEG7","Share Tech Mono",monospace;font-size:clamp(38px,12vw,56px);line-height:1;letter-spacing:2px;white-space:nowrap}
-  .num .ghost{position:absolute;left:0;right:0;top:0;text-align:center;color:#4a1009}
-  .num .digit{position:relative;color:var(--red);text-shadow:0 0 16px #ff2a1e88,0 0 3px #ff2a1e}
+  .num{position:relative;flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .seg{position:relative;display:inline-block}
+  .seg.side{border-left:2px solid #cdced4;margin-left:12px;padding-left:14px}
+  .seg .digit,.seg .ghost{font-family:"DSEG7","Share Tech Mono",monospace;font-size:clamp(38px,12vw,56px);line-height:1;letter-spacing:2px;white-space:nowrap}
+  .seg .ghost{position:absolute;left:0;top:0;color:#4a1009}
+  .seg .digit{position:relative;color:var(--red);text-shadow:0 0 16px #ff2a1e88,0 0 3px #ff2a1e}
   .unit{text-align:center;color:#c9c9d0;letter-spacing:.35em;font-size:15px;font-weight:700;margin-top:2px;padding-left:.35em}
   .pfoot{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:10px;padding:0 6px}
   .pfoot .mono{color:#c9c9d0}
@@ -122,7 +124,7 @@
       <div class="ptop"><span class="fare-label">FARE</span><span class="pico">8</span></div>
       <div class="pbody">
         <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="num"><span class="ghost" id="fareGhost">88.8</span><span class="digit" id="fareNum">85.0</span></div>
+        <div class="num"><span class="seg"><span class="ghost" id="ghostMain">88.</span><span class="digit" id="numMain">85.</span></span><span class="seg side"><span class="ghost" id="ghostSide">8</span><span class="digit" id="numSide">0</span></span></div>
       </div>
       <div class="unit" id="unit">NT$</div>
     </div>
@@ -248,7 +250,7 @@
     var n=Math.min(5,Math.max(1,Math.round(speed/18)+1)),bs=$("bars").children,L=bs.length;
     for(var i=0;i<L;i++)bs[i].className=(i>=L-n?"on":"");
   }
-  function setFareNum(v){var neg=v<0;v=Math.abs(v);var t=(neg?"-":"")+v.toFixed(1);$("fareNum").textContent=t;$("fareGhost").textContent=t.replace(/[0-9]/g,"8");}
+  function setFareNum(v){var neg=v<0;v=Math.abs(v);var t=(neg?"-":"")+v.toFixed(1);var i=t.indexOf(".");var main=t.slice(0,i+1),side=t.slice(i+1);$("numMain").textContent=main;$("ghostMain").textContent=main.replace(/[0-9]/g,"8");$("numSide").textContent=side;$("ghostSide").textContent=side.replace(/[0-9]/g,"8");}
 
   function render(){
     var bc=baseCalc(),bt=baseTotal(bc),items=fullItems(bc);
