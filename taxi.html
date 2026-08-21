@@ -126,6 +126,10 @@
   body.wide .detail .li{display:flex;justify-content:space-between;padding:3px 0}
   body.wide .detail .li .v{color:#c0c0c8}
   body.wide .detail-title{color:var(--muted);font-size:12px;margin-bottom:6px;letter-spacing:.05em}
+  /* 橫向時:縮小鈕移到左上角 */
+  body.wide .zoom{position:fixed;left:10px;top:10px;right:auto;bottom:auto;z-index:5}
+  body.wide .zoom button{width:32px;height:32px;font-size:14px}
+  body.wide header .title{padding-left:42px}
   .preset-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
   .preset-row button{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit;font-size:12px;cursor:pointer}
   .preset-row button:hover{border-color:var(--amber)}
@@ -338,7 +342,12 @@
 
   // 橫向模式(右側顯示費用明細)
   var wide=LS.getItem("taxi_wide")==="1";
-  function applyWide(){document.body.classList.toggle("wide",wide);LS.setItem("taxi_wide",wide?"1":"0");render();}
+  function applyWide(){
+    document.body.classList.toggle("wide",wide);
+    LS.setItem("taxi_wide",wide?"1":"0");
+    var b=$("btnWide");if(b){b.textContent=wide?"⤡":"⛶";b.title=wide?"回直向":"橫向/費用明細";}
+    render();
+  }
   $("btnWide").onclick=function(){wide=!wide;applyWide();};
 
   // ===== 歷史紀錄 =====
