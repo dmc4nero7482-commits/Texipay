@@ -31,7 +31,8 @@
   .topbtn:hover{border-color:var(--muted)}
   .topbtn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 
-  .panel{background:linear-gradient(160deg,var(--panel-a),var(--panel-b));border:1.5px solid #6a6a74;border-radius:18px;padding:16px 18px 14px;box-shadow:0 10px 30px #0009, inset 0 1px 0 #ffffff08}
+  .panel{background:linear-gradient(160deg,var(--panel-a),var(--panel-b));border:1.5px solid #6a6a74;border-radius:18px;padding:10px;box-shadow:0 10px 30px #0009}
+  .screen{background:#050506;border:1.5px solid #3a3a44;border-radius:12px;padding:12px 14px}
   .ptop{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:6px}
   .fare-label{color:#d6d6d6;font-weight:700;font-size:15px;letter-spacing:.5em;padding-left:.5em}
   .pico{position:absolute;right:0;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:2px solid #6a6a72;display:flex;align-items:center;justify-content:center;color:#9a9aa2;font-size:13px}
@@ -40,11 +41,11 @@
   .bars i{display:block;width:22px;height:6px;border-radius:2px;background:#3a3a20}
   .bars i.on{background:var(--amber);box-shadow:0 0 8px #ffcf3f88}
   .num{position:relative;flex:1;overflow:hidden;text-align:right}
-  .num .digit,.num .ghost{font-family:"DSEG7","Share Tech Mono",monospace;font-size:clamp(44px,15vw,74px);line-height:1;letter-spacing:2px;white-space:nowrap}
+  .num .digit,.num .ghost{font-family:"DSEG7","Share Tech Mono",monospace;font-size:clamp(54px,18vw,88px);line-height:1;letter-spacing:2px;white-space:nowrap}
   .num .ghost{position:absolute;right:0;top:0;color:#3a0e0a}
   .num .digit{position:relative;color:var(--red);text-shadow:0 0 16px #ff2a1e88,0 0 3px #ff2a1e}
   .unit{text-align:center;color:#c9c9d0;letter-spacing:.35em;font-size:15px;font-weight:700;margin-top:2px;padding-left:.35em}
-  .pfoot{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:10px;padding-top:10px;border-top:1px solid #33333a}
+  .pfoot{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:10px;padding:0 6px}
   .pfoot .mono{color:#c9c9d0}
 
   .status{text-align:center;font-size:26px;font-weight:900;color:#fff;margin:16px 0 8px;min-height:32px}
@@ -116,12 +117,14 @@
   </header>
 
   <div class="panel">
-    <div class="ptop"><span class="fare-label">FARE</span><span class="pico">⟳</span></div>
-    <div class="pbody">
-      <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i></div>
-      <div class="num"><span class="ghost" id="fareGhost">88.8</span><span class="digit" id="fareNum">85.0</span></div>
+    <div class="screen">
+      <div class="ptop"><span class="fare-label">FARE</span><span class="pico">8</span></div>
+      <div class="pbody">
+        <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="num"><span class="ghost" id="fareGhost">88.8</span><span class="digit" id="fareNum">85.0</span></div>
+      </div>
+      <div class="unit" id="unit">NT$</div>
     </div>
-    <div class="unit" id="unit">NT$</div>
     <div class="pfoot">
       <span>起程費 <span class="mono" id="cornerStart">85.0</span></span>
       <span>附加費 <span class="mono" id="cornerSur">0.0</span></span>
