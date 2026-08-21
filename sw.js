@@ -1,4 +1,4 @@
-const CACHE = 'taxi-meter-v1';
+const CACHE = 'taxi-meter-v2';
 const STATIC = ['./manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
@@ -28,7 +28,7 @@ self.addEventListener('fetch', e => {
     // HTML 走網路優先，離線時回退快取
     if (url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
         e.respondWith(
-            fetch(e.request)
+            fetch(e.request, { cache: 'reload' })
                 .then(res => {
                     caches.open(CACHE).then(c => c.put(e.request, res.clone()));
                     return res;
