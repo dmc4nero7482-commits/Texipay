@@ -151,8 +151,6 @@
       </div>
       <div class="unit"><span id="unit">NT$</span></div>
       <div class="zoom">
-        <button id="zoomOut" title="縮小字級">−</button>
-        <button id="zoomIn" title="放大字級">+</button>
         <button id="btnWide" title="橫向/費用明細">⛶</button>
       </div>
     </div>
@@ -332,18 +330,6 @@
   function setBadge(t,cls){var b=$("gpsBadge");b.textContent=t;b.className="gps"+(cls?(" "+cls):"");
     var g=$("gpsIcon");if(g)g.className="pico"+(cls?(" "+cls):"");}
 
-  // 放大/縮小 字級(存本機)
-  var zoom=parseFloat(LS.getItem("taxi_zoom")||"1");
-  function applyZoom(){
-    zoom=Math.min(1.6,Math.max(0.7,zoom));
-    LS.setItem("taxi_zoom",""+zoom);
-    document.querySelectorAll(".seg .digit,.seg .ghost").forEach(function(el){
-      el.style.fontSize="calc(clamp(48px,15vw,70px) * "+zoom+")";
-    });
-  }
-  $("zoomIn").onclick=function(){zoom+=0.1;applyZoom();};
-  $("zoomOut").onclick=function(){zoom-=0.1;applyZoom();};
-
   // 橫向模式(右側顯示費用明細)
   var wide=LS.getItem("taxi_wide")==="1";
   function applyWide(){document.body.classList.toggle("wide",wide);LS.setItem("taxi_wide",wide?"1":"0");render();}
@@ -429,7 +415,7 @@
   $("dispSel").onchange=function(){display=this.value;LS.setItem("taxi_display",display);render();};
   $("baseSel").onchange=function(){base=this.value;LS.setItem("taxi_base",base);refreshRates();render();};
 
-  buildSel($("dispSel"),display);buildSel($("baseSel"),base);$("soundToggle").checked=sound;buildPresets();buildFields();selectMode(mode);selectNight(nightMode);applyZoom();applyWide();
+  buildSel($("dispSel"),display);buildSel($("baseSel"),base);$("soundToggle").checked=sound;buildPresets();buildFields();selectMode(mode);selectNight(nightMode);applyWide();
   updateRateLine();if(!ratesTs||Date.now()-ratesTs>3600000)refreshRates();else render();
 
   if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}
