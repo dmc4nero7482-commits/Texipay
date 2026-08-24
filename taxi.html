@@ -45,7 +45,7 @@
   .zoom button svg{display:block}
   .zoom button:active{transform:translateY(1px)}
   .pbody{display:flex;align-items:stretch;gap:12px;min-height:150px}
-  .bars{display:flex;flex-direction:column;justify-content:space-between;flex:0 0 auto;align-self:stretch;padding:2px 0}
+  .bars{display:flex;flex-direction:column;justify-content:center;gap:4px;flex:0 0 auto;align-self:stretch;padding:2px 0}
   .bars i{display:block;width:28px;height:9px;border-radius:2px;background:#39391f}
   .bars i.on{background:var(--amber);box-shadow:0 0 8px #ffcf3f88}
   .num{position:relative;flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center}
@@ -152,7 +152,7 @@
     <div class="screen">
       <div class="ptop"><span class="fare-label">FARE</span><span class="pico" id="gpsIcon" title="GPS 定位狀態">◎</span></div>
       <div class="pbody">
-        <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
         <div class="num"><span class="seg"><span class="ghost" id="ghostMain">88.</span><span class="digit" id="numMain">85.</span></span><span class="seg side"><span class="ghost" id="ghostSide">8</span><span class="digit" id="numSide">0</span></span></div>
       </div>
       <div class="unit"><span id="unit">NT$</span></div>
@@ -294,7 +294,7 @@
   function convert(a,code){if(code===base)return a;var rB=rates[base],rC=rates[code];if(rB==null||rC==null)return null;return a/rB*rC;}
 
   function setBars(){ // 由下往上點亮
-    var n=Math.min(5,Math.max(1,Math.round(speed/18)+1)),bs=$("bars").children,L=bs.length;
+    var n=Math.min(6,Math.max(1,Math.floor(speed/15)+1)),bs=$("bars").children,L=bs.length;
     for(var i=0;i<L;i++)bs[i].className=(i>=L-n?"on":"");
   }
   function setFareNum(v){var neg=v<0;v=Math.abs(v);var t=(neg?"-":"")+v.toFixed(1);var i=t.indexOf(".");var main=t.slice(0,i+1),side=t.slice(i+1);$("numMain").textContent=main;$("ghostMain").textContent=main.replace(/[0-9]/g,"8");$("numSide").textContent=side;$("ghostSide").textContent=side.replace(/[0-9]/g,"8");}
