@@ -400,7 +400,12 @@
       h+='<div class="hist-item"><div class="l">'+r.date+'<br>'+r.km+' km · '+r.time+'</div><div class="r">'+r.sym+' '+r.fare+'</div></div>';}}
     $("histList").innerHTML=h;
   }
-  function openHist(o){$("overlay").classList.toggle("open",o);$("histSheet").classList.toggle("open",o);if(o)histRender();}
+  function openHist(o){
+    if(o){$("sheet").classList.remove("open");}
+    $("overlay").classList.toggle("open",o);
+    $("histSheet").classList.toggle("open",o);
+    if(o)histRender();
+  }
   $("btnHistory").onclick=function(){openHist(true);};
   $("histClose").onclick=function(){openHist(false);};
   $("histClear").onclick=function(){LS.removeItem("taxi_hist");histRender();};
@@ -523,7 +528,8 @@
   function buildFields(){var h="";for(var i=0;i<TW_FIELDS.length;i++){var k=TW_FIELDS[i][0];h+='<div class="field"><label>'+TW_FIELDS[i][1]+'</label><input type="number" step="0.1" data-k="'+k+'" value="'+fareTw[k]+'"></div>';}$("fareFields").innerHTML=h;$("fareFields").querySelectorAll("input").forEach(function(inp){inp.onchange=function(){var v=parseFloat(this.value);if(!isNaN(v)){fareTw[this.dataset.k]=v;LS.setItem("taxi_fare_tw",JSON.stringify(fareTw));render();}};});}
   function buildSel(sel,val){var h="";for(var i=0;i<CURRENCIES.length;i++){var c=CURRENCIES[i];h+='<option value="'+c[0]+'"'+(c[0]===val?" selected":"")+'>'+c[2]+' ('+c[0]+')</option>';}sel.innerHTML=h;}
   function openSheet(o){$("overlay").classList.toggle("open",o);$("sheet").classList.toggle("open",o);}
-  $("btnGear").onclick=function(){openSheet(true);};$("btnClose").onclick=function(){openSheet(false);};$("overlay").onclick=function(){openSheet(false);};
+  function closeAllSheets(){$("overlay").classList.remove("open");$("sheet").classList.remove("open");$("histSheet").classList.remove("open");}
+  $("btnGear").onclick=function(){openSheet(true);};$("btnClose").onclick=function(){openSheet(false);};$("overlay").onclick=closeAllSheets;
   $("soundToggle").onchange=function(){sound=this.checked;LS.setItem("taxi_sound",sound?"1":"0");};
   $("dispSel").onchange=function(){display=this.value;LS.setItem("taxi_display",display);render();};
   $("baseSel").onchange=function(){base=this.value;LS.setItem("taxi_base",base);refreshRates();render();};
