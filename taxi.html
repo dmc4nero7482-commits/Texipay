@@ -359,9 +359,20 @@
   function playKey(){if(sound)playEl($("snd_key_beep"),0.9);}
   function playConfirm(){if(sound)playEl($("snd_confirm_beep"));}
   function playEnd(){if(sound)playEl($("snd_end_beep"));}
+  // 只有「表值」項目(起程/續程/延滯)增加才播跳表音;
+  // 附加費、過路費、夜間加成由各自的操作音負責,避免誤觸發。
+  var METERED=["起程費","續程費","延滯費"];
   function detectEvents(){
     var items=fullItems(baseCalc());
-    if(lastItems){for(var i=0;i<items.length;i++){var prev=lastItems[i]?lastItems[i][1]:0,d=items[i][1]-prev;if(d>0.0001){setEvent(items[i][0]+" +"+fmtMoney(d,base)+"元");playTick();}}}
+    if(lastItems){
+      for(var i=0;i<items.length;i++){
+        var prev=lastItems[i]?lastItems[i][1]:0, d=items[i][1]-prev;
+        if(d>0.0001){
+          setEvent(items[i][0]+" +"+fmtMoney(d,base)+"元");
+          if(METERED.indexOf(items[i][0])>=0)playTick();
+        }
+      }
+    }
     lastItems=items.map(function(x){return [x[0],x[1]];});
   }
 
@@ -409,14 +420,42 @@
   $("btnHistory").onclick=function(){openHist(true);};
   $("histClose").onclick=function(){openHist(false);};
   $("histClear").onclick=function(){LS.removeItem("taxi_hist");histRender();};
+  // GPS 靜止漂移抑制:停等時位置仍會飄動,直接累加會憑空增加里程並推算出假車速
+  var MAX_ACC=50, MIN_STEP=4, STILL_KMH=3, smoothSpeed=0;
   function startGps(){if(mode!=="gps"||!navigator.geolocation||watchId!=null)return;setBadge("定位中…","");
-    watchId=navigator.geolocation.watchPosition(function(p){setBadge("GPS","ok");var c=p.coords,cur={lat:c.latitude,lng:c.longitude,t:p.timestamp};
-      if(c.accuracy&&c.accuracy>30){lastPos=cur;return;}
-      var sp=(c.speed!=null&&c.speed>=0)?c.speed*3.6:0;
-      if(lastPos){var dt=(cur.t-lastPos.t)/1000,dm=haversine(lastPos,cur);if((c.speed==null||c.speed<0)&&dt>0)sp=dm/dt*3.6;if(eng.state==="RUNNING"&&dm>0){eng.dist+=dm;if(highwayOn)eng.highwayMeters+=dm;}}
-      speed=sp;lastPos=cur;detectEvents();render();
+    watchId=navigator.geolocation.watchPosition(function(p){
+      setBadge("GPS","ok");
+      var c=p.coords, cur={lat:c.latitude,lng:c.longitude,t:p.timestamp};
+      var acc=(c.accuracy!=null)?c.accuracy:25;
+      // 1) 精度太差:只更新基準點
+      if(acc>MAX_ACC){lastPos=cur;smoothSpeed=0;speed=0;render();return;}
+      var dt=lastPos?((cur.t-lastPos.t)/1000):0;
+      var dm=lastPos?haversine(lastPos,cur):0;
+      // 3) 速度:硬體值優先,缺值才推算
+      var sp;
+      if(c.speed!=null&&c.speed>=0)sp=c.speed*3.6;
+      else if(lastPos&&dt>=0.5)sp=dm/dt*3.6;
+      else sp=0;
+      if(!isFinite(sp)||sp<0)sp=0;
+      if(sp>200)sp=0;
+      // 4) 靜止判定
+      var still=sp<STILL_KMH;
+      // 2)(5) 位移雜訊與合理性過濾
+      var delta=0;
+      if(lastPos&&!still){
+        var floorNoise=Math.max(MIN_STEP,acc);
+        if(dm>floorNoise){
+          var maxBySpeed=(dt>0)?((sp/3.6)*dt*1.5+5):Infinity;
+          if(dm<=maxBySpeed)delta=dm;
+        }
+      }
+      // 6) 速度平滑
+      smoothSpeed=still?0:(smoothSpeed*0.4+sp*0.6);
+      if(Math.abs(smoothSpeed)<0.5)smoothSpeed=0;
+      if(eng.state==="RUNNING"&&delta>0){eng.dist+=delta;if(highwayOn)eng.highwayMeters+=delta;}
+      speed=smoothSpeed;lastPos=cur;detectEvents();render();
     },function(){setBadge("GPS 無法使用","err");},{enableHighAccuracy:true,maximumAge:1000,timeout:15000});}
-  function stopGps(){if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null;}lastPos=null;}
+  function stopGps(){if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null;}lastPos=null;smoothSpeed=0;}
 
   function updateRateLine(){if(!ratesTs){$("rateLine").textContent="尚未取得匯率";return;}var m=floor((Date.now()-ratesTs)/60000),w=m<1?"剛剛":(m<60?m+" 分鐘前":floor(m/60)+" 小時前");$("rateLine").textContent="匯率更新："+w+"（基準 "+ratesBase+"）";}
   function parseFawaz(j,b){b=b.toLowerCase();if(!j[b])return null;var o={},m=j[b];for(var k in m)o[k.toUpperCase()]=m[k];return Object.keys(o).length?o:null;}
